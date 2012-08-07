@@ -1,72 +1,33 @@
 class @ThreeAPI
-  #   # #### LIGHTS & CAMERA
-  #   # @camera = new THREE.PerspectiveCamera 55, window.innerWidth / window.innerHeight, 1, 10000
-  #   # @camera.position.z = 600
-  #   # @scene.add @camera
-    
 
-  #   # @light = new THREE.PointLight 0xffffff
-  #   # @light.position.x = 10
-  #   # @light.position.y = 150
-  #   # @light.position.z = 20
-  #   # @text_mat = new THREE.MeshBasicMaterial
-  #   #     color: 0x
-  #   # @text_mesh = new THREE.Mesh @text_geom, @text_mat
+  ##############################################
+  #######     Geometry & Base Meshes     #######
+  ##############################################
 
-  #   # @scene.add @light
-  #   # # @scene.add new THR
+  geometry: (opts = {}) ->
+    new THREE.Geometry
 
-  ######################################
-  ######         Meshes           ######
-  ######################################
-
-  geom: (opts) =>
-
-  mesh: (opts) =>
-    geom = opts.geom || @geom()
-    material = opts.material || @material()
+  mesh: (opts = {}) ->
+    geom or= @geom()
+    material or= @material()
     mesh = new THREE.Mesh geom, mat
-  sphere:   (opts) =>
+  
+  sphere: (opts = {}) ->
     mesh = new @mesh()
   
-  material: (opts) =>
+  material: (opts = {}) ->
     new THREE.MeshBasicMaterial
 
-  ######################################
-  ######     Lights & Cameras     ######
-  ######################################
+  ##############################################
+  #########     Lights & Cameras         #######
+  ##############################################
 
-  camera:   (opts) =>
-    opts = opts || {}
-    #defaults
-    opts.type                 = opts.type                    || "perspective"
-    opts.field_of_view        = opts.field_of_view           || 45
-    opts.aspect_ratio         = opts.aspect_ratio            || window.innerWidth / window.innerHeight
-    opts.min                  = opts.near                    || 0
-    opts.max                  = opts.far                     || 10000
+  Light: ( opts = {} ) ->
+    opts.type or= "point"
+    opts.color or= 0xff0000
+    opts.intensity or= .5
+    opts.distance or= 100
 
-    # defaults for ortho cameras
-    if opts.type == "orthographic"
-      opts.left = opts.left || window.innerWidth / -2
-      opts.right = opts.right || window.innerWidth / 2
-      opts.top = opts.top || window.innerHeight / -2
-      opts.bottom = opts.bottom || window.innerHeight / 2
-
-    # types
-    cameras = 
-      perspective: THREE.PerspectiveCamera
-      ortographic: THREE.OrthographicCamera
-
-    switch opts.type
-      when "perspective" then new cameras[opts.type] opts.field_of_view, opts.aspect_ratio, opts.min, opts.max
-      when "orthographic" then new cameras[opts.type] opts.left, opts.right, opts.top, opts.bottom, opts.min, opts.max
-
-  light: ( opts ) =>
-    
-    opts.type          = opts.type         || "point"
-    opts.color         = opts.color        || 0xff0000
-    opts.intensity     = opts.intensity    || .5
-    opts.distance      = opts.distance     || 100
 
     lights =
       ambient: THREE.AmbientLight
@@ -74,10 +35,78 @@ class @ThreeAPI
       point: THREE.PointLight
       spot: THREE.SpotLight
     
-    switch opts.type
-      when "ambient" then new lights[opts.type] opts.color && log color
-      when "point" then new lights[opts.type] opts.color, opts.intensity, distance
-      when "spot" then new lights[opts.type] opts.color
-      when "directional" then new lights[opts.type] opts.color, opts.intensity
+    light = new lights.point opts.color, opts.intensity, opts.distance
 
+    switch opts.type
+      when "ambient" then light = new lights[opts.type] opts.color
+      when "point" then light = new lights[opts.type] opts.color, opts.intensity, opts.distance
+      when "spot" then light = new lights[opts.type] opts.color
+      when "directional" then light = new lights[opts.type] opts.color, opts.intensity
+
+    if opts.position
+      light.position.set opts.position[0],opts.position[1],opts.position[2]
     
+    if opts.scene
+      opts.scene.add light
+
+    return light
+
+
+  Camera: (opts = {}) ->
+    opts.type or= "perspective"
+    opts.field_of_view or= 45
+    opts.aspect_ratio or= window.innerWidth / window.innerHeight
+    opts.min or= 0
+    opts.max or= 10000
+
+    if opts.type == "orthographic"
+      opts.left or= window.innerWidth / -2
+      opts.right or= window.innerWidth / 2
+      opts.top or= window.innerHeight / -2
+      opts.bottom or= window.innerHeight / 2
+
+    cameras = 
+      perspective: THREE.PerspectiveCamera
+      ortographic: THREE.OrthographicCamera
+
+    switch opts.type
+      when "perspective" then camera = new cameras[opts.type] opts.field_of_view, 
+        opts.aspect_ratio, opts.min, opts.max
+      when "orthographic" then camera = new cameras[opts.type] opts.left, 
+        opts.right, opts.top, opts.bottom, opts.min, opts.max   
+
+    if camera
+      if opts.position
+        camera.position.set opts.position[0], 
+                            opts.position[1], 
+                            opts.position[2]
+
+      opts.scene.add camera if opts.scene
+      camera.lookat opts.scene.position if opts.scene
+
+    return camera
+
+      
+  ##############################################
+  #########     Scene & Renderers        #######
+  ##############################################
+
+  Scene: (opts = {}) ->
+    new THREE.Scene()
+
+  WebGLRenderer: (opts = {}) ->
+    opts.antialias or= true
+    opts.width or= window.innerWidth
+    opts.height or= window.innerHeight
+    renderer = new THREE.WebGLRenderer antialias: opts.antialias
+    renderer.setSize opts.width, opts.height
+    return renderer
+
+  ##############################################
+  #############      Helpers        ############
+  ##############################################
+
+  Helpers:
+
+    BindResize: (renderer, camera) ->      
+      THREEx.WindowResize renderer, camera

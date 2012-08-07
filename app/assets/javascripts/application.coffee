@@ -14,7 +14,18 @@ $ ->
 
   class App extends Backbone.View
     initialize: =>
-      @api = new ThreeAPI()
+      @three = new ThreeAPI()
+
+      # initialize the scene with some basic objects.
+      @camera = @three.Camera()
+      @scene = @three.Scene()
+      @light = @three.Light 
+        type: "point"
+        scene:@scene
+        position:[0,150,400]
+        shadows: true
+
+      @renderer = @three.WebGLRenderer()
   
   window.app = new App()
   
