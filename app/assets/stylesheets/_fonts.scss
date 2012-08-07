@@ -1,0 +1,13 @@
+@import "compass/css3/font-face";
+
+@include font-face("GibsonBold", font-files("gibson-bold-webfont.woff", woff, 
+    "gibson-bold.otf", opentype), "gibson-bold-webfont.eot");
+
+@include font-face("Gibson", font-files("gibson-webfont.woff", woff, 
+    "gibson-otf", opentype), "gibson-webfont.eot");
+
+@include font-face("GibsonLight", font-files("gibson-light-webfont.woff", woff, 
+    "gibson-light.otf", opentype), "gibson-light-webfont.eot");
+
+@include font-face("GibsonSemiBold", font-files("gibson-semibold-webfont.woff", woff, 
+    "gibson-semibold.otf", opentype), "gibson-semibold-webfont.eot");

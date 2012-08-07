@@ -1,0 +1,24 @@
+@import "compass/css3"
+@import "compass/utilities/general/clearfix"
+@import "reset"
+@import "fonts"
+
+
+@mixin gibson($face:"GibsonSemiBold")
+	font-family: $face
+
+@mixin cover
+	+background-size("cover")
+
+@mixin bg($url:"/assets/projects/bad-bg.jpg")
+	background: url($url) 50% 50% no-repeat
+	+cover
+
+body
+	+gibson
+	margin: 0
+	padding: 0
+
+	#container
+		+bg
+		
