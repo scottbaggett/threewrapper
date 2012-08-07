@@ -1,17 +1,17 @@
 development:
-  bucket: nyc-stories-dev
-  access_key_id: AKIAJPFX7SL32JS6ED7A
-  secret_access_key: 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
+  bucket: 
+  access_key_id: 
+  secret_access_key: 
   simple_db_consistent_reads: false
 
 test:
-  bucket: nyc-stories-test
-  access_key_id: AKIAJPFX7SL32JS6ED7A
-  secret_access_key: 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
+  bucket: 
+  access_key_id: 
+  secret_access_key: 
   simple_db_consistent_reads: false
 
 production:
-  bucket: nyc-stories-prod
-  access_key_id: AKIAJPFX7SL32JS6ED7A
-  secret_access_key: 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
+  bucket: 
+  access_key_id: 
+  secret_access_key: 
   simple_db_consistent_reads: false
